@@ -41,7 +41,7 @@ module Simple_Single_CPU (
   wire alu_zero, alu_overflow;
   wire [31:0] shifter_result;
   wire [31:0] data_mem_out;
-  wire [31:0] mux_write_out;
+  wire [31:0] mux_write_out, mux_write_out_2;
 
 
   //modules
@@ -70,7 +70,7 @@ module Simple_Single_CPU (
   ) Mux_branch_type1 (
       .data0_i(alu_zero),
       .data1_i(~alu_zero),
-      .data2_i(alu_result == 32'b00000000000000000000000000000001),
+      .data2_i(alu_result === 32'b00000000000000000000000000000001),
       .select_i(branch_type1),
       .data_o(mux_branch_type_out1)
   );
@@ -79,8 +79,8 @@ module Simple_Single_CPU (
       .size(1)
   ) Mux_branch_type2 (
       .data0_i(mux_branch_type_out1),
-      .data1_i(rs_data != 32'b00000000000000000000000000000000),
-      .data2_i(rs_data >= 32'b00000000000000000000000000000000),
+      .data1_i($signed(rs_data) != 0),
+      .data2_i($signed(rs_data) >= 0),
       .select_i(branch_type2),
       .data_o(mux_branch_type_out)
   );
@@ -90,7 +90,7 @@ module Simple_Single_CPU (
   ) Mux_branch (
       .data0_i(pc_adder),
       .data1_i(branch_adder),
-      .select_i(branch & mux_branch_type_out),
+      .select_i(branch && mux_branch_type_out),
       .data_o(mux_branch_out)
   );
 
@@ -131,7 +131,7 @@ module Simple_Single_CPU (
       .RSaddr_i(instr[25:21]),
       .RTaddr_i(instr[20:16]),
       .RDaddr_i(mux_write_reg_out),
-      .RDdata_i(mux_write_out),
+      .RDdata_i(mux_write_out_2),
       .RegWrite_i(reg_write),
       .RSdata_o(rs_data),
       .RTdata_o(rt_data)
@@ -218,18 +218,17 @@ module Simple_Single_CPU (
   Mux3to1 #(
       .size(32)
   ) Mux_Write (
-      .data0_i(alu_result),
+      .data0_i(mux_write_out),
       .data1_i(data_mem_out),
       .data2_i(pc_adder),
       .select_i(mem_to_reg),
-      .data_o(mux_write_out)
+      .data_o(mux_write_out_2)
   );
 
-  //always @(*) begin
-  //  if(instr[31:26] == 6'b001111) $display("pc=%d, mux_write_out=%d, mux_write_reg_out=%d, pc_adder=%d, mem_to_reg=%d", pc_in, mux_write_out, mux_write_reg_out, pc_adder, mem_to_reg);
-  //end
+  always @(*) begin
+    if(instr[31:26] == 6'b011110) $display("pc=%d, test=%d, data=%d, data2=%d", pc_in, $signed(rs_data) >= 0, $signed(rs_data), rs_data);
+  end
 
 endmodule
-
 
 

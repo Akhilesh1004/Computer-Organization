@@ -46,7 +46,7 @@ module Decoder (
   assign ALUOp_o = (instr_op_i == 6'b000000) ? 3'b001 : // R-type
                    (instr_op_i == 6'b011000 || instr_op_i == 6'b101000 || instr_op_i == 6'b010011) ? 3'b010 : // I-type lw sw addi
                    (instr_op_i == 6'b011001 || instr_op_i == 6'b011010) ? 3'b011 : // I-type beq bne
-                   (instr_op_i == 6'b011001) ? 3'b000: //blt
+                   (instr_op_i == 6'b011100) ? 3'b000: //blt
                    3'b100; // default
   assign ALUSrc_o = (instr_op_i == 6'b010011) | (instr_op_i == 6'b011000) | (instr_op_i == 6'b101000);
   assign RegDst_o = (instr_op_i == 6'b000000)? 2'b01 :
@@ -54,7 +54,7 @@ module Decoder (
                     2'b00;
   assign Jump_o = (instr_op_i == 6'b001100 || instr_op_i == 6'b001111)? 2'b01 :
                   (instr_op_i == 6'b000000 && funct_i == 6'b000001)? 2'b10 :
-                   1'b0;
+                   2'b00;
   assign Branch_o = (instr_op_i == 6'b011001) | (instr_op_i == 6'b011010) | (instr_op_i == 6'b011100) | (instr_op_i == 6'b011101) | (instr_op_i == 6'b011110);
   assign BranchType1_o = (instr_op_i == 6'b011010)? 2'b01 :
                          (instr_op_i == 6'b011001)? 2'b00 :
@@ -63,9 +63,9 @@ module Decoder (
                          (instr_op_i == 6'b011110)? 2'b10 :
                          2'b00; // 1 for bnez, 2 for bgez
   assign MemRead_o = (instr_op_i == 6'b011000)? 1'b1 : 1'b0;
-  assign MemWrite_o = (instr_op_i == 6'b101000)? 1'b1 : 1'b0;
+  assign MemWrite_o = (instr_op_i == 6'b101000 )? 1'b1 : 1'b0;
   assign MemtoReg_o = (instr_op_i == 6'b011000)? 2'b01 :
                       (instr_op_i == 6'b001111)? 2'b10 :
                        2'b00;
-
+  
 endmodule

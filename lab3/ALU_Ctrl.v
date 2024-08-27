@@ -33,7 +33,7 @@ module ALU_Ctrl (
                            (funct_i == 6'b010000)? 4'b0100:
                            (funct_i == 6'b011000)? 4'b0101:
                            (funct_i == 6'b101000)? 4'b0110:
-                           (funct_i == 6'b010100 || ALUOp_i == 3'b010 )? 4'b0111:
+                           (funct_i == 6'b010100 || ALUOp_i == 3'b000 )? 4'b0111:
                            4'b1000;
   
 endmodule

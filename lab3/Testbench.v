@@ -265,6 +265,7 @@ module Testbench;
           end
           $display("(correct value) pc_addr:%1d", pc);
           $display("(your value)    pc_addr:%1d", cpu.PC.pc_out_o);
+          $display("(your value)    r%1d:%1d", 31, $signed(cpu.RF.Reg_File[31]));
           wa = 1;
         end
         // check the register & memory
